@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+*.db
+checkpoints/
+.pytest_cache/
+node_modules/
+dist/
+.env

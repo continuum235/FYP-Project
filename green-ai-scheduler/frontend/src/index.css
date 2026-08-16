@@ -1,0 +1,165 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #4ade80;
+}
+
+.policy-tabs button {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-left: 0.5rem;
+}
+
+.policy-tabs button.active {
+  background: #166534;
+  color: #fff;
+  border-color: #4ade80;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid #334155;
+}
+
+.card .label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card .value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+
+.carbon-card.clean { border-color: #4ade80; }
+.carbon-card.moderate { border-color: #facc15; }
+.carbon-card.dirty { border-color: #f87171; }
+
+.jobs h2 {
+  font-size: 1rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.jobs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.submit-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.submit-bar input {
+  width: 4rem;
+  padding: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #475569;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.submit-bar button {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  border: 1px solid #4ade80;
+  background: #166534;
+  color: #fff;
+  cursor: pointer;
+}
+
+.submit-bar button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.jobs > h2 {
+  font-size: 1rem;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+}
+
+.job-row {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge.QUEUED, .badge.WAITING { background: #334155; }
+.badge.RUNNING { background: #166534; color: #4ade80; }
+.badge.PAUSED, .badge.MANUALLY_PAUSED { background: #713f12; color: #fbbf24; }
+.badge.COMPLETED { background: #1e3a5f; color: #60a5fa; }
+.badge.FAILED { background: #7f1d1d; color: #fca5a5; }
+
+.progress {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.actions button {
+  margin-left: 0.5rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  border: 1px solid #475569;
+  background: #0f172a;
+  color: #e2e8f0;
+  cursor: pointer;
+}

@@ -1,0 +1,20 @@
+{
+  "greedy": {
+    "total_carbon_g": 2.839737,
+    "carbon_saved_g": 1835.5655591098073,
+    "deadline_misses": 1,
+    "performance_violations": 0,
+    "avg_pause_count": 0.2972972972972973,
+    "jobs_completed": 37,
+    "clean_window_finishes": 18
+  },
+  "ppo": {
+    "total_carbon_g": 2.351967,
+    "carbon_saved_g": 1461.7661625200956,
+    "deadline_misses": 9,
+    "performance_violations": 0,
+    "avg_pause_count": 0.6206896551724138,
+    "jobs_completed": 29,
+    "clean_window_finishes": 6
+  }
+}
