@@ -7,3 +7,4 @@ checkpoints/
 node_modules/
 dist/
 .env
+data

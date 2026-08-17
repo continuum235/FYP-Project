@@ -21,7 +21,10 @@ def _load_ppo() -> PPOPolicy | None:
     path = Path(settings.ppo_model_path)
     if path.exists():
         model = PPO.load(str(path))
-        return PPOPolicy(model=model)
+        return PPOPolicy(
+            model=model,
+            deadline_critical_hours=settings.deadline_critical_hours,
+        )
     return None
 
 
@@ -67,6 +70,7 @@ async def init_app_state(app: FastAPI) -> None:
         decision_engine=decision,
         tick_interval_seconds=settings.tick_interval_seconds,
         max_pause_count=settings.greedy_max_pause_count,
+        run_threshold=settings.greedy_run_threshold,
     )
     await orch.start()
     app.state.orchestrator = orch

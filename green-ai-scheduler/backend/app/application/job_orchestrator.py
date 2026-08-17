@@ -27,6 +27,11 @@ from app.infrastructure.persistent_store import JobRow, PersistentJobStore
 from app.intelligence.carbon_estimator import CarbonEstimator
 from app.intelligence.decision_engine import DecisionEngine
 from app.intelligence.gaiq_engine import GaiQEngine, ProfileData
+from app.intelligence.state_builder import (
+    forecast_avg_and_min,
+    progress_ratio,
+    time_to_clean_window_hours,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +48,7 @@ class JobOrchestrator:
         decision_engine: DecisionEngine,
         tick_interval_seconds: int = 60,
         max_pause_count: int = 10,
+        run_threshold: float = 450.0,
     ) -> None:
         self._store = store
         self._execution = execution_engine
@@ -51,6 +57,7 @@ class JobOrchestrator:
         self._decision = decision_engine
         self._tick_interval = tick_interval_seconds
         self._max_pause_count = max_pause_count
+        self._run_threshold = run_threshold
         self._tick_task: Optional[asyncio.Task] = None
         self._job_start_times: dict[int, datetime] = {}
         self._job_wait_start: dict[int, datetime] = {}
@@ -138,7 +145,14 @@ class JobOrchestrator:
             policy=policy_name,
         )
 
-    def _build_state(self, job: JobRow, intensity: float, forecast: Optional[list[float]]) -> SchedulingState:
+    def _build_state(
+        self,
+        job: JobRow,
+        intensity: float,
+        forecast: Optional[list[float]],
+        *,
+        queue_length: int = 0,
+    ) -> SchedulingState:
         now = datetime.utcnow()
         is_running = job.status == JobStatus.RUNNING
         time_running = 0.0
@@ -152,10 +166,17 @@ class JobOrchestrator:
         if job.deadline:
             time_to_deadline = max(0.0, (job.deadline - now).total_seconds() / 3600.0)
 
+        f_avg, f_min = forecast_avg_and_min(forecast)
+        clean_window = time_to_clean_window_hours(forecast, self._run_threshold)
+        prog = progress_ratio(job.current_epoch, job.total_epochs)
+
         return SchedulingState(
             is_currently_running=is_running,
             carbon_intensity=intensity,
             carbon_forecast=forecast,
+            forecast_avg=f_avg,
+            forecast_min=f_min,
+            time_to_clean_window_hours=clean_window,
             time_waiting_hours=time_waiting,
             time_running_hours=time_running,
             time_to_deadline_hours=time_to_deadline,
@@ -165,7 +186,14 @@ class JobOrchestrator:
             current_epoch=job.current_epoch,
             performance_target=job.performance_target,
             total_epochs=job.total_epochs,
+            progress_ratio=prog,
+            queue_length=queue_length,
         )
+
+    async def _queue_length(self) -> int:
+        jobs = await self._store.list_jobs()
+        waiting_statuses = {JobStatus.QUEUED, JobStatus.WAITING, JobStatus.PAUSED}
+        return sum(1 for j in jobs if j.status in waiting_statuses)
 
     async def _select_job_for_tick(self) -> Optional[JobRow]:
         running = await self._store.get_jobs_by_status(JobStatus.RUNNING)
@@ -198,7 +226,10 @@ class JobOrchestrator:
         self._decision.reset_call_count()
         grid = await self._carbon.get_current_intensity()
         forecast = await self._carbon.get_forecast()
-        state = self._build_state(job, grid.carbon_intensity_g_per_kwh, forecast)
+        queue_len = await self._queue_length()
+        state = self._build_state(
+            job, grid.carbon_intensity_g_per_kwh, forecast, queue_length=queue_len
+        )
         action = self._decision.decide(state)
 
         if job.status == JobStatus.RUNNING:

@@ -29,7 +29,7 @@ def train_kwargs_for(job_type: JobType, job_id: int, start_epoch: int, total_epo
         "checkpoint_path": checkpoint_path,
     }
     if job_type == JobType.SIMULATED:
-        base["batch_sleep_s"] = 0.02
-        base["batches_per_epoch"] = 10
+        base["batch_sleep_s"] = 0.3
+        base["batches_per_epoch"] = 15
         base["power_kw"] = 0.05
     return base

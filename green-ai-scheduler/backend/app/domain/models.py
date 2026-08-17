@@ -3,8 +3,6 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from pydantic import BaseModel, Field
-
 from app.domain.enums import Action, JobStatus, JobType
 
 
@@ -51,6 +49,9 @@ class SchedulingState(BaseModel):
     is_currently_running: bool
     carbon_intensity: float
     carbon_forecast: Optional[list[float]] = None
+    forecast_avg: Optional[float] = None
+    forecast_min: Optional[float] = None
+    time_to_clean_window_hours: Optional[float] = None
     time_waiting_hours: float = 0.0
     time_running_hours: float = 0.0
     time_to_deadline_hours: Optional[float] = None
@@ -60,6 +61,8 @@ class SchedulingState(BaseModel):
     current_epoch: int = 0
     performance_target: Optional[int] = None
     total_epochs: int = 1
+    progress_ratio: Optional[float] = None
+    queue_length: int = 0
 
 
 class SessionReport(BaseModel):
@@ -98,5 +101,5 @@ class BulkJobCreate(BaseModel):
     name_prefix: str = "batch-job"
     job_type: JobType = JobType.SIMULATED
     total_epochs: int = 2
-    performance_target: int = 1
+    performance_target: Optional[int] = None
     priority: int = 0

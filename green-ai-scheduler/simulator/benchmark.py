@@ -8,7 +8,13 @@ import pandas as pd
 from app.domain.enums import Action
 from app.domain.models import SchedulingState
 from app.intelligence.policies.greedy import GreedyPolicy
-from app.intelligence.policies.ppo_policy import CARBON_MIN, CARBON_MAX
+from app.intelligence.state_builder import (
+    forecast_avg_and_min,
+    progress_ratio,
+    time_to_clean_window_hours,
+)
+
+SIM_TICK_HOURS = 1.0 / 12.0
 
 
 @dataclass
@@ -78,19 +84,35 @@ class SchedulingSimulator:
             self._intensity_at(self.current_tick + i)
             for i in range(1, 13)
         ]
+        f_avg, f_min = forecast_avg_and_min(forecast)
+        clean_window = time_to_clean_window_hours(
+            forecast, self.run_threshold, step_hours=SIM_TICK_HOURS
+        )
+        queue_len = sum(
+            1
+            for j in self.jobs
+            if j.status in ("QUEUED", "WAITING", "PAUSED")
+            and j.arrival_tick <= self.current_tick
+        )
+        prog = progress_ratio(job.current_epoch, job.total_epochs)
         return SchedulingState(
             is_currently_running=job is self.running_job,
             carbon_intensity=intensity,
             carbon_forecast=forecast,
-            time_waiting_hours=max(0.0, (self.current_tick - job.arrival_tick) / 12.0),
+            forecast_avg=f_avg,
+            forecast_min=f_min,
+            time_to_clean_window_hours=clean_window,
+            time_waiting_hours=max(0.0, (self.current_tick - job.arrival_tick) * SIM_TICK_HOURS),
             time_running_hours=0.5 if self.running_job else 0.0,
-            time_to_deadline_hours=max(0, (job.deadline_tick - self.current_tick) / 12.0),
+            time_to_deadline_hours=max(0, (job.deadline_tick - self.current_tick) * SIM_TICK_HOURS),
             priority=job.priority,
             pause_count=job.pause_count,
             max_pause_count=10,
             current_epoch=job.current_epoch,
             performance_target=job.performance_target,
             total_epochs=job.total_epochs,
+            progress_ratio=prog,
+            queue_length=queue_len,
         )
 
     def _select_candidate(self) -> SimJob | None:
@@ -120,15 +142,12 @@ class SchedulingSimulator:
 
         if self.running_job:
             if action in (Action.WAIT, Action.PAUSE):
+                job.pause_count += 1
+                self.metrics.pause_count_total += 1
                 if job.current_epoch < job.performance_target:
-                    pass
-                else:
-                    job.pause_count += 1
-                    self.metrics.pause_count_total += 1
-                    if job.current_epoch < job.performance_target:
-                        self.metrics.performance_violations += 1
-                    job.status = "PAUSED"
-                    self.running_job = None
+                    self.metrics.performance_violations += 1
+                job.status = "PAUSED"
+                self.running_job = None
             else:
                 job.current_epoch += 1
                 intensity = self._intensity_at(self.current_tick)

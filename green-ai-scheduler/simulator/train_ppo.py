@@ -9,12 +9,16 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 
 from app.domain.enums import Action
-from app.domain.models import SchedulingState
 from app.intelligence.policies.greedy import GreedyPolicy
-from app.intelligence.policies.ppo_policy import CARBON_MAX, CARBON_MIN, state_to_obs
+from app.intelligence.policies.ppo_policy import OBS_SIZE, state_to_obs
 from simulator.benchmark import SchedulingSimulator, load_carbon_csv
 
-OBS_SIZE = 8
+CARBON_BETA = 0.65
+DEADLINE_MISS_PENALTY = -10.0
+PERFORMANCE_SHORTFALL_PENALTY = -2.0
+WAIT_PENALTY = -0.01
+COMPLETION_BONUS = 1.0
+RUN_START_BONUS = 0.2
 
 
 class SchedulerEnv(gym.Env):
@@ -50,37 +54,49 @@ class SchedulerEnv(gym.Env):
         action = {0: Action.RUN, 1: Action.WAIT, 2: Action.PAUSE}[int(action_idx)]
         reward = 0.0
         pre_carbon = job.carbon_used_g
+        intensity = self.sim._intensity_at(self.sim.current_tick)
 
         if self.sim.running_job:
             if action in (Action.WAIT, Action.PAUSE):
                 if job.current_epoch < job.performance_target:
-                    reward -= 5.0
+                    reward += PERFORMANCE_SHORTFALL_PENALTY
                 job.pause_count += 1
                 job.status = "PAUSED"
                 self.sim.running_job = None
-                reward -= 0.1
+                reward += WAIT_PENALTY
             else:
                 job.current_epoch += 1
-                intensity = self.sim._intensity_at(self.sim.current_tick)
-                job.carbon_used_g += 0.05 * intensity / 500
-                reward -= job.carbon_used_g - pre_carbon
+                session_carbon = 0.05 * intensity / 500
+                job.carbon_used_g += session_carbon
+                reward -= CARBON_BETA * (job.carbon_used_g - pre_carbon)
                 if job.current_epoch >= job.total_epochs:
                     job.status = "COMPLETED"
                     self.sim.running_job = None
-                    if intensity < 450:
-                        reward += 1.0
+                    reward += COMPLETION_BONUS
+                    if job.current_epoch < job.performance_target:
+                        reward += PERFORMANCE_SHORTFALL_PENALTY
+                    if self.sim.current_tick > job.deadline_tick:
+                        reward += DEADLINE_MISS_PENALTY
         else:
             if action == Action.RUN:
                 job.status = "RUNNING"
                 self.sim.running_job = job
-                reward += 0.5
+                reward += RUN_START_BONUS
+                session_carbon = 0.05 * intensity / 500
+                job.carbon_used_g += session_carbon
+                reward -= CARBON_BETA * session_carbon
             else:
-                reward -= 0.05
+                reward += WAIT_PENALTY
                 if job.current_epoch < job.performance_target:
-                    reward -= 2.0
+                    reward += PERFORMANCE_SHORTFALL_PENALTY * 0.5
 
         self.sim.current_tick += 1
         self._step += 1
+
+        if self.sim.current_tick > job.deadline_tick and job.status not in ("COMPLETED", "FAILED"):
+            job.status = "FAILED"
+            reward += DEADLINE_MISS_PENALTY
+
         done = self._step >= self.horizon
         next_job = self.sim._select_candidate()
         obs = state_to_obs(self.sim._build_state(next_job)) if next_job else np.zeros(OBS_SIZE, dtype=np.float32)

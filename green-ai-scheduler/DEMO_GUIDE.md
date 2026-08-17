@@ -35,6 +35,7 @@ Use this document to **understand the full project** and to **present it live** 
 | Simulated jobs for main demo | Fast demo; real ResNet/BERT available |
 | Single machine only | By design; cluster = future work |
 | Benchmark not "real kg CO₂" | Policy comparison only |
+| Jobs ran at 605 gCO₂/kWh | Old behavior forced RUN via `performance_target`; now carbon-aware WAIT/PAUSE unless deadline is critical |
 
 ### Grade expectation (honest)
 
@@ -121,9 +122,9 @@ Dashboard shows carbon saved vs baseline estimate
 
 ### Constraints enforced
 
-1. **Deadline** — if time is running out, job runs even if carbon is high  
-2. **Performance floor** — `performance_target` = minimum epochs before carbon-aware pause is allowed  
-3. **Carbon** — prefer running when intensity is low (Greedy thresholds or PPO decision)
+1. **Deadline** — if time is running out, job runs even if carbon is high (hard override)  
+2. **Performance goal** — `performance_target` is a soft training goal (PPO reward penalty), not a hard force-RUN  
+3. **Carbon** — prefer running when intensity is low (Greedy thresholds or PPO learned decision)
 
 ---
 
@@ -189,7 +190,7 @@ Dashboard shows carbon saved vs baseline estimate
 # Terminal 1 — Backend (from backend folder)
 cd green-ai-scheduler/backend
 pip install -r requirements.txt datasets   # if not done
-export TICK_INTERVAL_SECONDS=10            # faster scheduling for demo
+export TICK_INTERVAL_SECONDS=5            # faster scheduling for demo
 PYTHONPATH=. uvicorn app.api.main:app --reload --port 8000
 
 # Terminal 2 — Frontend
@@ -393,10 +394,10 @@ Study these before your presentation. Answers are written in **spoken style** �
 **A:** Time and scope. Cost needs electricity pricing data and billing logic separate from carbon. We prioritized carbon scheduling as the core thesis and documented cost as future work so it is a scope decision, not an oversight.
 
 **Q9: What constraints does your system enforce?**  
-**A:** Three: (1) **Deadline** — run even when carbon is high if deadline is near; (2) **Performance** — minimum epoch floor before carbon-aware pause; (3) **Carbon** — prefer running when intensity is below threshold.
+**A:** Three layers: (1) **Hard deadline** — force RUN when deadline is critical or Greedy deadline pressure is high; (2) **Soft performance** — `performance_target` is encouraged via PPO reward penalties, not a hard override; (3) **Carbon** — Greedy uses fixed thresholds; PPO learns deferral from context (forecast, slack, queue).
 
 **Q10: How do you define "training performance"?**  
-**A:** As a minimum epoch floor — `performance_target` means the job must reach at least that many epochs before the scheduler is allowed to pause it for carbon reasons. This prevents carbon-aware scheduling from stalling training indefinitely.
+**A:** As a soft goal via `performance_target`. The scheduler may pause before that epoch if carbon is high and deadline slack allows — matching paper-style batch deferral. Violations are tracked in benchmark metrics and penalized in PPO training reward.
 
 ---
 
@@ -447,10 +448,10 @@ Study these before your presentation. Answers are written in **spoken style** �
 ### E. Greedy vs PPO
 
 **Q23: Explain Greedy policy.**  
-**A:** If carbon intensity is below 450 gCO₂/kWh, start or keep running. If above 550 while running, pause. The gap between 450 and 550 is hysteresis to prevent thrashing. We force RUN if deadline is close, pause limit reached, or epoch is below performance floor.
+**A:** Rule-based baseline: run when carbon &lt; 450 gCO₂/kWh; pause when &gt; 550 while running (hysteresis band in between). Force RUN only when deadline pressure is high, pause limit is reached, or deadline is in the critical window.
 
 **Q24: Explain PPO policy.**  
-**A:** Proximal Policy Optimization — a reinforcement learning agent trained offline on a year of India carbon data in a simulator. It outputs run, wait, or pause from an 8-dimensional state including carbon, deadline, and epoch progress. We use the same orchestrator and safety overrides as Greedy.
+**A:** PPO trained offline on India carbon data. It outputs RUN/WAIT/PAUSE from a 12-dimensional state (carbon, forecast, clean-window ETA, deadline slack, queue length, progress). Unlike Greedy, it does not use fixed thresholds — it learns context-dependent deferral. Hard overrides apply only for critical deadline and max pauses.
 
 **Q25: Why didn't PPO beat Greedy in your benchmark?**  
 **A:** Greedy is hand-tuned for exactly this threshold problem. Our PPO had limited training — about 50k steps — on a simplified simulator. It paused more often, completed fewer jobs, and missed more deadlines. That is a valid research result — learned policies need more tuning to beat strong baselines.
@@ -525,7 +526,7 @@ Study these before your presentation. Answers are written in **spoken style** �
 1. **Problem:** Schedule ML training for greener grid periods  
 2. **Core:** JobOrchestrator + Greedy (demo) + PPO (comparison)  
 3. **Real:** Electricity Maps API + CodeCarbon + optional ResNet/BERT  
-4. **Constraints:** Deadline + min epochs + carbon thresholds  
+4. **Constraints:** Hard deadline + soft performance goal + carbon (Greedy thresholds / PPO learned)  
 5. **Honest gaps:** No cost; single node; PPO under-tuned; simulated jobs for fast demo  
 
 ---
@@ -536,7 +537,7 @@ Study these before your presentation. Answers are written in **spoken style** �
 ```bash
 # Terminal 1
 cd green-ai-scheduler/backend
-export TICK_INTERVAL_SECONDS=10
+export TICK_INTERVAL_SECONDS=5
 PYTHONPATH=. uvicorn app.api.main:app --reload --port 8000
 
 # Terminal 2
@@ -555,7 +556,7 @@ curl -s http://localhost:8000/health
 curl "http://localhost:8000/stats?policy=greedy"
 curl -X POST http://localhost:8000/jobs/bulk \
   -H "Content-Type: application/json" \
-  -d '{"count":5,"name_prefix":"demo","job_type":"simulated","total_epochs":2,"performance_target":1}'
+  -d '{"count":5,"name_prefix":"demo","job_type":"simulated","total_epochs":2}'
 ```
 
 ### Submit 3 jobs under PPO
@@ -563,7 +564,7 @@ curl -X POST http://localhost:8000/jobs/bulk \
 curl "http://localhost:8000/stats?policy=ppo"
 curl -X POST http://localhost:8000/jobs/bulk \
   -H "Content-Type: application/json" \
-  -d '{"count":3,"name_prefix":"ppo-demo","job_type":"simulated","total_epochs":2,"performance_target":1}'
+  -d '{"count":3,"name_prefix":"ppo-demo","job_type":"simulated","total_epochs":2}'
 ```
 
 ### Watch progress

@@ -4,6 +4,20 @@ What was built, what changed recently, and what is still missing vs the problem 
 
 ---
 
+## Paper-aligned scheduler refactor (latest)
+
+| Area | Change |
+|------|--------|
+| `backend/app/intelligence/constraints.py` | Shared `must_force_run()` — deadline critical + max pauses only |
+| `backend/app/intelligence/policies/greedy.py` | Removed `performance_target` hard override; kept `_deadline_pressure` |
+| `backend/app/intelligence/policies/ppo_policy.py` | 12-dim observation space; PPO hard overrides match constraints helper |
+| `backend/app/intelligence/state_builder.py` | Forecast stats, clean-window ETA, progress ratio helpers |
+| `simulator/train_ppo.py` | Paper-style reward (carbon β=0.65, deadline/performance penalties) |
+| `simulator/models/ppo_scheduler.zip` | Retrained for 12-dim obs |
+| Demo defaults | Bulk submit omits `performance_target`; slower simulated jobs for visible WAIT/PAUSE |
+
+---
+
 ## Recent changes (implementation pipeline)
 
 ### Job training layer (new)

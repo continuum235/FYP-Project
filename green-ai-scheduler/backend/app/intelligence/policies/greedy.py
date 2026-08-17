@@ -1,5 +1,6 @@
 from app.domain.enums import Action
 from app.domain.models import SchedulingState
+from app.intelligence.constraints import must_force_run
 from app.intelligence.policies.base import SchedulingPolicy
 
 
@@ -18,11 +19,6 @@ class GreedyPolicy(SchedulingPolicy):
         self.max_pause_count = max_pause_count
         self.deadline_safety_margin_hours = deadline_safety_margin_hours
 
-    def _below_performance_floor(self, state: SchedulingState) -> bool:
-        if state.performance_target is None:
-            return False
-        return state.current_epoch < state.performance_target
-
     def _deadline_pressure(self, state: SchedulingState) -> bool:
         if state.time_to_deadline_hours is None:
             return False
@@ -38,11 +34,7 @@ class GreedyPolicy(SchedulingPolicy):
         )
 
     def _force_run(self, state: SchedulingState) -> bool:
-        return (
-            state.pause_count >= self.max_pause_count
-            or self._below_performance_floor(state)
-            or self._deadline_pressure(state)
-        )
+        return must_force_run(state) or self._deadline_pressure(state)
 
     def decide(self, state: SchedulingState) -> Action:
         if self._force_run(state):

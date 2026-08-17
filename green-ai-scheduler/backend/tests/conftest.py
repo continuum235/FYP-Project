@@ -78,6 +78,7 @@ async def orchestrator(db_store, tmp_checkpoint_dir, carbon_estimator, policy):
         decision_engine=decision,
         tick_interval_seconds=3600,
         max_pause_count=10,
+        run_threshold=450.0,
     )
     yield orch
     await orch.stop()

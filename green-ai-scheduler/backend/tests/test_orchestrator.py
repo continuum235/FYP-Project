@@ -24,10 +24,10 @@ async def test_job_lifecycle(orchestrator, carbon_estimator):
     updated = await orchestrator.get_job(job.id)
     assert updated.status in (JobStatus.RUNNING, JobStatus.COMPLETED, JobStatus.WAITING)
 
-    for _ in range(30):
+    for _ in range(80):
         if updated.status == JobStatus.COMPLETED:
             break
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(0.25)
         updated = await orchestrator.get_job(job.id)
     assert updated.status == JobStatus.COMPLETED
 
@@ -236,16 +236,33 @@ async def test_baseline_set_once_at_submission(orchestrator, carbon_estimator):
 
 
 @pytest.mark.asyncio
-async def test_performance_floor_forces_run_on_tick(orchestrator, carbon_estimator):
+async def test_deadline_pressure_forces_run_on_tick(orchestrator, carbon_estimator):
     carbon_estimator.set_mock_intensity(700.0)
     job = await orchestrator.submit_job(
         JobCreate(
-            name="perf",
+            name="deadline",
             job_type=JobType.SIMULATED,
-            total_epochs=3,
-            performance_target=2,
+            total_epochs=5,
+            performance_target=1,
+            deadline=datetime.utcnow() + timedelta(minutes=20),
         )
     )
     await orchestrator.tick()
     updated = await orchestrator.get_job(job.id)
-    assert updated.status in (JobStatus.RUNNING, JobStatus.WAITING, JobStatus.COMPLETED)
+    assert updated.status in (JobStatus.RUNNING, JobStatus.COMPLETED)
+
+
+@pytest.mark.asyncio
+async def test_high_carbon_waits_without_deadline(orchestrator, carbon_estimator):
+    carbon_estimator.set_mock_intensity(700.0)
+    job = await orchestrator.submit_job(
+        JobCreate(
+            name="wait-dirty",
+            job_type=JobType.SIMULATED,
+            total_epochs=3,
+            performance_target=1,
+        )
+    )
+    await orchestrator.tick()
+    updated = await orchestrator.get_job(job.id)
+    assert updated.status in (JobStatus.WAITING, JobStatus.QUEUED)

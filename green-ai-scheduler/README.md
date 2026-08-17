@@ -86,7 +86,7 @@ Intelligence never writes to the database. `ExecutionEngine` reports sessions; `
 
 ### Performance constraint
 
-`performance_target` = minimum `current_epoch` before carbon-aware pause is allowed. GreedyPolicy RUN-forces when `current_epoch < performance_target`.
+`performance_target` is a **soft** training-progress goal. It is enforced via PPO reward penalties and benchmark `performance_violations` metrics — not as a hard scheduler override. **Hard force-RUN** applies only when the deadline is critical, Greedy deadline pressure is high, or `pause_count` reaches the limit.
 
 ## Known limitations
 

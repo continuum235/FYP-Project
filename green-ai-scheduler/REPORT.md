@@ -7,7 +7,7 @@
 | Reduce carbon footprint via scheduling | GreedyPolicy + PPOPolicy pause/resume during high-carbon windows |
 | High renewable / clean grid periods | Carbon intensity (gCO₂/kWh) from Electricity Maps |
 | Deadline constraints | GreedyPolicy deadline-proximity RUN-forcing |
-| Performance constraints | `performance_target` min-epoch floor before pause |
+| Performance constraints | `performance_target` soft goal (PPO reward + benchmark metrics) |
 | Cost constraints | **Descoped** — documented intentional milestone cut |
 
 ## Carbon signal choice

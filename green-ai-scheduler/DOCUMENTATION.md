@@ -18,7 +18,7 @@ This table maps the **faculty problem statement (PS)** to this implementation. U
 | Reduce carbon footprint via intelligent scheduling | **Done** | Greedy + PPO policies, pause/resume, `/stats` carbon saved | Core deliverable |
 | Schedule during high renewable / clean grid periods | **Done** (with substitution) | `CarbonEstimator`, Electricity Maps API + CSV | Uses **carbon intensity (gCO₂/kWh)**, not renewable % — see [REPORT.md](REPORT.md) |
 | **Deadline** constraints | **Done** | `GreedyPolicy` deadline-proximity RUN-forcing; PPO force-RUN near deadline | See [status_machine.md](backend/docs/status_machine.md) |
-| **Performance** constraints | **Done** | `performance_target` = min-epoch floor before carbon-aware pause | Enforced in Greedy; safety override in PPO |
+| **Performance** constraints | **Done** | `performance_target` soft goal via PPO reward + benchmark metrics | Not a hard Greedy/PPO override |
 | **Cost** constraints | **Not done** (documented descope) | README, REPORT, §1 below | Intentional milestone cut — state this plainly to faculty |
 | Active scheduling (not just measurement) | **Done** | `JobOrchestrator` tick loop, not measure-only like CodeCarbon alone | |
 | Real ML model training (ResNet / BERT) | **Done** (live jobs) | `jobs/resnet50_cifar.py`, `jobs/bert_imdb.py`, `registry.py` | Benchmark still uses synthetic jobs for speed |
@@ -127,7 +127,8 @@ See also [backend/docs/status_machine.md](backend/docs/status_machine.md).
 
 - **Start / resume** when carbon intensity &lt; `run_threshold` (default 450 gCO₂/kWh)
 - **Pause** when intensity &gt; `pause_threshold` (default 550 gCO₂/kWh) — hysteresis prevents thrashing
-- **Force RUN** when: deadline is close, `pause_count` at max, or `current_epoch < performance_target`
+- **Force RUN** when: deadline is close (`_deadline_pressure` or critical window), or `pause_count` at max
+- **`performance_target`**: soft constraint — penalized in PPO training reward, not a policy override
 
 | Use Greedy when… | Why |
 |------------------|-----|
@@ -138,7 +139,7 @@ See also [backend/docs/status_machine.md](backend/docs/status_machine.md).
 
 ### PPOPolicy (learned, optional)
 
-**How it works:** A small reinforcement-learning model (`stable-baselines3` PPO) trained offline on historical carbon data. It outputs `RUN`, `WAIT`, or `PAUSE` from an 8-dimensional state vector.
+**How it works:** A small reinforcement-learning model (`stable-baselines3` PPO) trained offline on historical carbon data. It outputs `RUN`, `WAIT`, or `PAUSE` from a 12-dimensional state vector (carbon, forecast, deadline slack, queue length, progress, etc.).
 
 | Use PPO when… | Why |
 |---------------|-----|
@@ -151,7 +152,7 @@ See also [backend/docs/status_machine.md](backend/docs/status_machine.md).
 | Situation | What runs |
 |-----------|-----------|
 | PPO model file **missing** | `PPOPolicy` delegates to **GreedyPolicy** |
-| PPO model **loaded** but constraints violated | **Force RUN** for deadline, performance floor, max pauses (same safety rules as Greedy) |
+| PPO model **loaded** but hard constraints violated | **Force RUN** for critical deadline or max pauses only |
 | No API key in `.env` | `CarbonEstimator` uses **mock** 500 gCO₂/kWh |
 | CSV missing for simulator | **Synthetic** random carbon series (329–706 range) |
 
@@ -279,6 +280,7 @@ ELECTRICITY_MAPS_ZONE=IN
 |---------|---------|---------|
 | `greedy_run_threshold` | 450 | Start when intensity below this |
 | `greedy_pause_threshold` | 550 | Pause when intensity above this |
+| `deadline_critical_hours` | 1.0 | PPO hard force-RUN when deadline within this window |
 | `tick_interval_seconds` | 60 | Scheduler tick period |
 | `ppo_model_path` | `../simulator/models/ppo_scheduler.zip` | Trained PPO weights |
 

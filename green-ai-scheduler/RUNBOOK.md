@@ -62,7 +62,7 @@ Open **two terminals**.
 cd green-ai-scheduler/backend
 
 # Faster scheduling for demos (optional; default is 60s)
-export TICK_INTERVAL_SECONDS=10
+export TICK_INTERVAL_SECONDS=5
 
 PYTHONPATH=. uvicorn app.api.main:app --reload --port 8000
 ```
@@ -299,7 +299,7 @@ PYTHONPATH=.:.. python -m simulator.benchmark --policies greedy,ppo --horizon 20
 
 | Min | Action |
 |-----|--------|
-| 0 | Start backend (`TICK_INTERVAL_SECONDS=10`) + frontend |
+| 0 | Start backend (`TICK_INTERVAL_SECONDS=5`) + frontend |
 | 1 | Show `/grid/status` — live India carbon |
 | 2 | Greedy tab → submit 5 simulated jobs → show queue moving |
 | 3 | Show one job completing — epoch progress, carbon saved |

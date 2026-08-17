@@ -60,7 +60,7 @@ export default function App() {
           name_prefix: 'demo',
           job_type: 'simulated',
           total_epochs: 2,
-          performance_target: 1,
+          performance_target: null,
         }),
       })
       await fetchAll()

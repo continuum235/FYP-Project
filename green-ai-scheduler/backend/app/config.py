@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     greedy_pause_threshold: float = 550.0
     greedy_max_pause_count: int = 10
     greedy_deadline_safety_margin_hours: float = 0.5
+    deadline_critical_hours: float = 1.0
     carbon_cache_ttl_seconds: int = 300
     checkpoint_dir: str = "./checkpoints"
     ppo_model_path: str = "../simulator/models/ppo_scheduler.zip"
