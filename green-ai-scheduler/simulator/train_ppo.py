@@ -9,6 +9,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 
 from app.domain.enums import Action
+from app.intelligence.defaults import GREEDY_PAUSE_THRESHOLD, GREEDY_RUN_THRESHOLD
 from app.intelligence.policies.greedy import GreedyPolicy
 from app.intelligence.policies.ppo_policy import OBS_SIZE, state_to_obs
 from simulator.benchmark import SchedulingSimulator, load_carbon_csv
@@ -37,7 +38,10 @@ class SchedulerEnv(gym.Env):
         super().reset(seed=seed)
         self.sim = SchedulingSimulator(
             carbon_series=self.carbon_series,
-            policy=GreedyPolicy(run_threshold=450.0, pause_threshold=550.0),
+            policy=GreedyPolicy(
+                run_threshold=GREEDY_RUN_THRESHOLD,
+                pause_threshold=GREEDY_PAUSE_THRESHOLD,
+            ),
         )
         self.sim.add_poisson_arrivals(rate=0.05, horizon=self.horizon)
         self._step = 0
@@ -107,7 +111,7 @@ def make_env(carbon_series: np.ndarray, horizon: int = 500) -> SchedulerEnv:
     return SchedulerEnv(carbon_series, horizon)
 
 
-def train(output_dir: Path | None = None, timesteps: int = 50000) -> Path:
+def train(output_dir: Path | None = None, timesteps: int = 200000) -> Path:
     output_dir = output_dir or Path(__file__).parent / "models"
     output_dir.mkdir(parents=True, exist_ok=True)
     log_dir = Path(__file__).parent / "logs"

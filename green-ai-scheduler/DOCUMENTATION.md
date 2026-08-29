@@ -125,8 +125,8 @@ See also [backend/docs/status_machine.md](backend/docs/status_machine.md).
 
 **How it works:** Hand-tuned thresholds.
 
-- **Start / resume** when carbon intensity &lt; `run_threshold` (default 450 gCO₂/kWh)
-- **Pause** when intensity &gt; `pause_threshold` (default 550 gCO₂/kWh) — hysteresis prevents thrashing
+- **Start / resume** when carbon intensity &lt; `run_threshold` (default **550** gCO₂/kWh — India-tuned)
+- **Pause** when intensity &gt; `pause_threshold` (default **700** gCO₂/kWh) — hysteresis band **550–700** prevents thrashing
 - **Force RUN** when: deadline is close (`_deadline_pressure` or critical window), or `pause_count` at max
 - **`performance_target`**: soft constraint — penalized in PPO training reward, not a policy override
 
@@ -278,8 +278,8 @@ ELECTRICITY_MAPS_ZONE=IN
 
 | Setting | Default | Purpose |
 |---------|---------|---------|
-| `greedy_run_threshold` | 450 | Start when intensity below this |
-| `greedy_pause_threshold` | 550 | Pause when intensity above this |
+| `greedy_run_threshold` | 550 | RUN when intensity below this (clean grid, India) |
+| `greedy_pause_threshold` | 700 | PAUSE when intensity above this (dirty grid, India) |
 | `deadline_critical_hours` | 1.0 | PPO hard force-RUN when deadline within this window |
 | `tick_interval_seconds` | 60 | Scheduler tick period |
 | `ppo_model_path` | `../simulator/models/ppo_scheduler.zip` | Trained PPO weights |

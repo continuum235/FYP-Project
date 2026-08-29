@@ -66,7 +66,7 @@ A **single-machine scheduler** (not cloud/Kubernetes) with:
 |-----------|------|
 | **FastAPI backend** | REST API for jobs, grid status, stats |
 | **JobOrchestrator** | Brain — ticks every N seconds, picks one job, asks policy, dispatches work |
-| **GreedyPolicy** | Rule-based: run when carbon &lt; 450, pause when &gt; 550 gCO₂/kWh |
+| **GreedyPolicy** | Rule-based: RUN when carbon &lt; 550, PAUSE when &gt; 700 gCO₂/kWh (hold band 550–700) |
 | **PPOPolicy** | ML-learned alternative (trained offline on 2025 India carbon data) |
 | **ExecutionEngine** | Runs one training job at a time in a worker thread |
 | **CarbonEstimator** | Live carbon from **Electricity Maps API** (zone `IN`) |
@@ -448,7 +448,7 @@ Study these before your presentation. Answers are written in **spoken style** �
 ### E. Greedy vs PPO
 
 **Q23: Explain Greedy policy.**  
-**A:** Rule-based baseline: run when carbon &lt; 450 gCO₂/kWh; pause when &gt; 550 while running (hysteresis band in between). Force RUN only when deadline pressure is high, pause limit is reached, or deadline is in the critical window.
+**A:** Rule-based baseline tuned for India grid: RUN when carbon &lt; 550 gCO₂/kWh; PAUSE when &gt; 700 while running; **hold/evaluate** in the 550–700 band (queued jobs wait, running jobs continue). Force RUN only when deadline pressure is high, pause limit is reached, or deadline is in the critical window.
 
 **Q24: Explain PPO policy.**  
 **A:** PPO trained offline on India carbon data. It outputs RUN/WAIT/PAUSE from a 12-dimensional state (carbon, forecast, clean-window ETA, deadline slack, queue length, progress). Unlike Greedy, it does not use fixed thresholds — it learns context-dependent deferral. Hard overrides apply only for critical deadline and max pauses.

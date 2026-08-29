@@ -325,7 +325,7 @@ All live jobs use **CodeCarbon** per session (`jobs/carbon_session.py`).
 
 | Problem | Solution |
 |---------|----------|
-| Jobs stay QUEUED forever | Lower `TICK_INTERVAL_SECONDS`; check intensity vs thresholds (450/550) |
+| Jobs stay QUEUED forever | Lower `TICK_INTERVAL_SECONDS`; check intensity vs thresholds (550/700) |
 | `GET /` was 404 | Use `/docs` or `/` (now returns links) |
 | PPO same as Greedy | Train model first; check `simulator/models/ppo_scheduler.zip` exists |
 | PPO benchmark 0 jobs | Fixed in code — re-run benchmark after `train_ppo` |

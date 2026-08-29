@@ -2,10 +2,23 @@
 
 from __future__ import annotations
 
+import logging
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Iterator
+
+
+def _quiet_codecarbon_logging() -> None:
+    """Keep codecarbon off stderr — avoids pytest capture and closed-stream errors in timer threads."""
+    cc_logger = logging.getLogger("codecarbon")
+    cc_logger.handlers = [
+        h for h in cc_logger.handlers if not isinstance(h, logging.StreamHandler)
+    ]
+    if not cc_logger.handlers:
+        cc_logger.addHandler(logging.NullHandler())
+    cc_logger.setLevel(logging.ERROR)
+    cc_logger.propagate = False
 
 
 @dataclass
@@ -35,10 +48,12 @@ def carbon_training_session(
     try:
         from codecarbon import EmissionsTracker
 
+        _quiet_codecarbon_logging()
         tracker = EmissionsTracker(
             project_name=f"green_scheduler_job_{job_id}",
             save_to_file=False,
             allow_multiple_runs=True,
+            log_level="error",
         )
         tracker.start()
         used_codecarbon = True

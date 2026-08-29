@@ -3,12 +3,16 @@ import pytest
 from app.domain.models import SchedulingState
 from app.intelligence.constraints import must_force_run
 from app.domain.enums import Action
+from app.intelligence.defaults import GREEDY_PAUSE_THRESHOLD, GREEDY_RUN_THRESHOLD
 from app.intelligence.policies.greedy import GreedyPolicy
 
 
 @pytest.fixture
 def policy():
-    return GreedyPolicy(run_threshold=450.0, pause_threshold=550.0)
+    return GreedyPolicy(
+        run_threshold=GREEDY_RUN_THRESHOLD,
+        pause_threshold=GREEDY_PAUSE_THRESHOLD,
+    )
 
 
 def test_run_when_clean_grid(policy):
@@ -32,10 +36,19 @@ def test_wait_when_dirty_grid(policy):
 def test_pause_when_running_and_dirty(policy):
     state = SchedulingState(
         is_currently_running=True,
-        carbon_intensity=600.0,
+        carbon_intensity=750.0,
         total_epochs=2,
     )
     assert policy.decide(state) == Action.WAIT
+
+
+def test_hold_band_running_keeps_job(policy):
+    state = SchedulingState(
+        is_currently_running=True,
+        carbon_intensity=620.0,
+        total_epochs=2,
+    )
+    assert policy.decide(state) == Action.RUN
 
 
 def test_high_carbon_waits_despite_performance_target(policy):

@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import tempfile
 from pathlib import Path
@@ -15,8 +16,28 @@ from app.infrastructure.persistent_store import PersistentJobStore
 from app.intelligence.carbon_estimator import CarbonEstimator
 from app.intelligence.decision_engine import DecisionEngine
 from app.intelligence.gaiq_engine import GaiQEngine
+from app.intelligence.defaults import GREEDY_PAUSE_THRESHOLD, GREEDY_RUN_THRESHOLD
 from app.intelligence.policies.greedy import GreedyPolicy
 from app.intelligence.policies.ppo_policy import PPOPolicy
+
+
+@pytest.fixture(autouse=True)
+def _quiet_codecarbon_logging():
+    """Prevent codecarbon timer threads from writing to pytest-captured (then closed) stderr."""
+    cc_logger = logging.getLogger("codecarbon")
+    saved_handlers = cc_logger.handlers[:]
+    saved_level = cc_logger.level
+    saved_propagate = cc_logger.propagate
+    cc_logger.handlers.clear()
+    cc_logger.addHandler(logging.NullHandler())
+    cc_logger.setLevel(logging.CRITICAL)
+    cc_logger.propagate = False
+    yield
+    cc_logger.handlers.clear()
+    for handler in saved_handlers:
+        cc_logger.addHandler(handler)
+    cc_logger.setLevel(saved_level)
+    cc_logger.propagate = saved_propagate
 
 
 @pytest.fixture
@@ -46,8 +67,8 @@ def carbon_estimator():
 @pytest.fixture
 def greedy_policy():
     return GreedyPolicy(
-        run_threshold=450.0,
-        pause_threshold=550.0,
+        run_threshold=GREEDY_RUN_THRESHOLD,
+        pause_threshold=GREEDY_PAUSE_THRESHOLD,
         max_pause_count=10,
         deadline_safety_margin_hours=0.5,
     )
@@ -78,7 +99,7 @@ async def orchestrator(db_store, tmp_checkpoint_dir, carbon_estimator, policy):
         decision_engine=decision,
         tick_interval_seconds=3600,
         max_pause_count=10,
-        run_threshold=450.0,
+        run_threshold=GREEDY_RUN_THRESHOLD,
     )
     yield orch
     await orch.stop()

@@ -26,6 +26,7 @@ from app.infrastructure.jobs.registry import get_train_fn, train_kwargs_for
 from app.infrastructure.persistent_store import JobRow, PersistentJobStore
 from app.intelligence.carbon_estimator import CarbonEstimator
 from app.intelligence.decision_engine import DecisionEngine
+from app.intelligence.defaults import GREEDY_RUN_THRESHOLD
 from app.intelligence.gaiq_engine import GaiQEngine, ProfileData
 from app.intelligence.state_builder import (
     forecast_avg_and_min,
@@ -48,7 +49,7 @@ class JobOrchestrator:
         decision_engine: DecisionEngine,
         tick_interval_seconds: int = 60,
         max_pause_count: int = 10,
-        run_threshold: float = 450.0,
+        run_threshold: float = GREEDY_RUN_THRESHOLD,
     ) -> None:
         self._store = store
         self._execution = execution_engine

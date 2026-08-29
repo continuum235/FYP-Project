@@ -7,6 +7,7 @@ import pandas as pd
 
 from app.domain.enums import Action
 from app.domain.models import SchedulingState
+from app.intelligence.defaults import GREEDY_PAUSE_THRESHOLD, GREEDY_RUN_THRESHOLD
 from app.intelligence.policies.greedy import GreedyPolicy
 from app.intelligence.state_builder import (
     forecast_avg_and_min,
@@ -47,7 +48,7 @@ class SimMetrics:
 class SchedulingSimulator:
     carbon_series: np.ndarray
     policy: object
-    run_threshold: float = 450.0
+    run_threshold: float = 550.0
     jobs: list[SimJob] = field(default_factory=list)
     current_tick: int = 0
     running_job: SimJob | None = None
@@ -211,7 +212,10 @@ def run_benchmark(
     results = {}
     for name in policies:
         if name == "greedy":
-            policy = GreedyPolicy(run_threshold=450.0, pause_threshold=550.0)
+            policy = GreedyPolicy(
+                run_threshold=GREEDY_RUN_THRESHOLD,
+                pause_threshold=GREEDY_PAUSE_THRESHOLD,
+            )
         else:
             from app.intelligence.policies.ppo_policy import PPOPolicy
             from stable_baselines3 import PPO
@@ -221,7 +225,10 @@ def run_benchmark(
             if model_path.exists():
                 policy = PPOPolicy(model=PPO.load(str(model_path)))
             else:
-                policy = GreedyPolicy(run_threshold=450.0, pause_threshold=550.0)
+                policy = GreedyPolicy(
+                run_threshold=GREEDY_RUN_THRESHOLD,
+                pause_threshold=GREEDY_PAUSE_THRESHOLD,
+            )
 
         sim = SchedulingSimulator(carbon_series=carbon, policy=policy)
         sim.add_poisson_arrivals(rate=0.02, horizon=horizon)

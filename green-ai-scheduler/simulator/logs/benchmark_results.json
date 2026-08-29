@@ -1,20 +1,20 @@
 {
   "greedy": {
-    "total_carbon_g": 2.839737,
-    "carbon_saved_g": 1835.5655591098073,
-    "deadline_misses": 1,
+    "total_carbon_g": 2.9592820000000004,
+    "carbon_saved_g": 1839.3924612572748,
+    "deadline_misses": 0,
     "performance_violations": 0,
-    "avg_pause_count": 0.2972972972972973,
+    "avg_pause_count": 0.0,
     "jobs_completed": 37,
-    "clean_window_finishes": 18
+    "clean_window_finishes": 24
   },
   "ppo": {
-    "total_carbon_g": 2.7056580000000006,
-    "carbon_saved_g": 1737.5741740996443,
-    "deadline_misses": 3,
+    "total_carbon_g": 3.39839,
+    "carbon_saved_g": 1949.7457603161117,
+    "deadline_misses": 0,
     "performance_violations": 0,
-    "avg_pause_count": 0.34285714285714286,
-    "jobs_completed": 35,
-    "clean_window_finishes": 13
+    "avg_pause_count": 0.0,
+    "jobs_completed": 39,
+    "clean_window_finishes": 6
   }
 }

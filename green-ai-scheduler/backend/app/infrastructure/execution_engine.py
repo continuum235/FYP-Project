@@ -104,8 +104,8 @@ class ExecutionEngine:
         path = self._checkpoint_dir / f"job_{job_id}.pt"
         return str(path)
 
-    async def shutdown(self) -> None:
-        self._thread_pool.shutdown(wait=False, cancel_futures=True)
+    async def shutdown(self, *, wait: bool = True) -> None:
+        self._thread_pool.shutdown(wait=wait, cancel_futures=not wait)
 
 
 from app.infrastructure.jobs.simulated import run_simulated_job  # re-export for tests

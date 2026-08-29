@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     electricity_maps_zone: str = "IN"
     scheduling_policy: str = "greedy"
     tick_interval_seconds: int = 60
-    greedy_run_threshold: float = 450.0
-    greedy_pause_threshold: float = 550.0
+    greedy_run_threshold: float = 550.0
+    greedy_pause_threshold: float = 700.0
     greedy_max_pause_count: int = 10
     greedy_deadline_safety_margin_hours: float = 0.5
     deadline_critical_hours: float = 1.0

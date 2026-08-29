@@ -4,6 +4,7 @@ from stable_baselines3 import PPO
 from app.domain.enums import Action
 from app.domain.models import SchedulingState
 from app.intelligence.constraints import must_force_run
+from app.intelligence.defaults import GREEDY_PAUSE_THRESHOLD, GREEDY_RUN_THRESHOLD
 from app.intelligence.policies.greedy import GreedyPolicy
 from app.intelligence.policies.base import SchedulingPolicy
 
@@ -22,7 +23,7 @@ def _forecast_stats(state: SchedulingState) -> tuple[float, float]:
     )
 
 
-def state_to_obs(state: SchedulingState, *, run_threshold: float = 450.0) -> np.ndarray:
+def state_to_obs(state: SchedulingState, *, run_threshold: float = GREEDY_RUN_THRESHOLD) -> np.ndarray:
     carbon_norm = (state.carbon_intensity - CARBON_MIN) / (CARBON_MAX - CARBON_MIN)
     forecast_avg, forecast_min = _forecast_stats(state)
     forecast_avg_norm = (forecast_avg - CARBON_MIN) / (CARBON_MAX - CARBON_MIN)
@@ -81,7 +82,10 @@ class PPOPolicy(SchedulingPolicy):
         deadline_critical_hours: float = 1.0,
     ) -> None:
         self._model = model
-        self._fallback = fallback or GreedyPolicy(run_threshold=450.0, pause_threshold=550.0)
+        self._fallback = fallback or GreedyPolicy(
+            run_threshold=GREEDY_RUN_THRESHOLD,
+            pause_threshold=GREEDY_PAUSE_THRESHOLD,
+        )
         self._deadline_critical_hours = deadline_critical_hours
 
     def decide(self, state: SchedulingState) -> Action:

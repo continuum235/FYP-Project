@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 const API = '/api'
 
 function carbonClass(intensity) {
-  if (intensity < 450) return 'clean'
-  if (intensity < 550) return 'moderate'
+  if (intensity < 550) return 'clean'
+  if (intensity < 700) return 'moderate'
   return 'dirty'
 }
 

@@ -3,6 +3,7 @@ from typing import Optional
 from app.domain.enums import Action
 from app.domain.models import SchedulingState
 from app.intelligence.policies.base import SchedulingPolicy
+from app.intelligence.defaults import GREEDY_PAUSE_THRESHOLD, GREEDY_RUN_THRESHOLD
 from app.intelligence.policies.greedy import GreedyPolicy
 from app.intelligence.policies.ppo_policy import PPOPolicy
 
@@ -37,5 +38,8 @@ def build_policy(
             return PPOPolicy(model=None)
         return ppo
     if greedy is None:
-        greedy = GreedyPolicy(run_threshold=450.0, pause_threshold=550.0)
+        greedy = GreedyPolicy(
+            run_threshold=GREEDY_RUN_THRESHOLD,
+            pause_threshold=GREEDY_PAUSE_THRESHOLD,
+        )
     return greedy

@@ -14,7 +14,7 @@ What was built, what changed recently, and what is still missing vs the problem 
 | `backend/app/intelligence/state_builder.py` | Forecast stats, clean-window ETA, progress ratio helpers |
 | `simulator/train_ppo.py` | Paper-style reward (carbon β=0.65, deadline/performance penalties) |
 | `simulator/models/ppo_scheduler.zip` | Retrained for 12-dim obs |
-| Demo defaults | Bulk submit omits `performance_target`; slower simulated jobs for visible WAIT/PAUSE |
+| India Greedy thresholds updated to 550 RUN / 700 PAUSE (hold band 550–700) | All policies, UI, tests, docs |
 
 ---
 

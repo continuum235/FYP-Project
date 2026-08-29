@@ -53,10 +53,13 @@ def test_state_to_obs_shape():
 @pytest.mark.benchmark
 def test_benchmark_runs():
     from pathlib import Path
+
     from simulator.benchmark import run_benchmark
 
+    project_root = Path(__file__).resolve().parents[2]
+    csv_path = project_root / "simulator" / "data" / "snapshots_2026-02-10_IN-2025-5_minute.csv"
     results = run_benchmark(
-        Path(__file__).parent.parent / "simulator" / "data" / "snapshots.csv",
+        csv_path,
         policies=["greedy"],
         horizon=100,
     )
