@@ -134,8 +134,13 @@ class JobOrchestrator:
     async def get_stats(self) -> StatsResponse:
         counts = await self._store.count_by_status()
         policy_name = "greedy"
-        if hasattr(self._decision.policy, "_model"):
-            policy_name = "ppo" if getattr(self._decision.policy, "_model", None) else "greedy"
+        policy_obj = self._decision.policy
+        if hasattr(policy_obj, "_model") and getattr(policy_obj, "_model", None) is not None:
+            policy_name = "ppo"
+        elif type(policy_obj).__name__.lower().startswith("forecast"):
+            policy_name = "forecast"
+        elif type(policy_obj).__name__.lower().startswith("constraint"):
+            policy_name = "constraint_lexicographic"
         return StatsResponse(
             jobs_waiting=counts.get(JobStatus.WAITING.value, 0)
             + counts.get(JobStatus.QUEUED.value, 0)

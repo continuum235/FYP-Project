@@ -8,6 +8,8 @@ import pandas as pd
 from app.domain.enums import Action
 from app.domain.models import SchedulingState
 from app.intelligence.defaults import GREEDY_PAUSE_THRESHOLD, GREEDY_RUN_THRESHOLD
+from app.intelligence.policies.constraint_lexicographic import ConstraintLexicographicPolicy
+from app.intelligence.policies.forecast import ForecastPolicy
 from app.intelligence.policies.greedy import GreedyPolicy
 from app.intelligence.state_builder import (
     forecast_avg_and_min,
@@ -58,6 +60,7 @@ class SchedulingSimulator:
     def add_poisson_arrivals(self, rate: float, horizon: int) -> None:
         t = 0
         jid = 0
+        created = 0
         while t < horizon:
             t += int(self.rng.exponential(1.0 / rate)) + 1
             if t >= horizon:
@@ -74,6 +77,25 @@ class SchedulingSimulator:
                 )
             )
             jid += 1
+            created += 1
+
+        if created == 0 and horizon > 0:
+            fallback_count = min(5, max(2, horizon // 4))
+            step = max(1, horizon // max(1, fallback_count))
+            for i in range(fallback_count):
+                tick = min(horizon - 1, max(1, (i + 1) * step))
+                self.jobs.append(
+                    SimJob(
+                        job_id=jid,
+                        priority=i % 3,
+                        total_epochs=2,
+                        performance_target=1,
+                        deadline_tick=min(horizon + 20, tick + 20),
+                        arrival_tick=tick,
+                        baseline_carbon_g=50.0 + i * 5,
+                    )
+                )
+                jid += 1
 
     def _intensity_at(self, tick: int) -> float:
         idx = min(tick, len(self.carbon_series) - 1)
@@ -188,18 +210,48 @@ class SchedulingSimulator:
 
 
 def load_carbon_csv(path: Path, validation_only: bool = True) -> np.ndarray:
+    rng = np.random.default_rng(0)
     if not path.exists():
-        rng = np.random.default_rng(0)
         return rng.uniform(329, 706, size=5000)
-    df = pd.read_csv(path)
-    col = "Carbon intensity gCO₂eq/kWh (direct)"
-    if col not in df.columns:
-        col = [c for c in df.columns if "Carbon intensity" in c][0]
-    series = df[col].astype(float).values
+
+    try:
+        df = pd.read_csv(path)
+    except Exception:
+        return rng.uniform(329, 706, size=5000)
+
+    if df.empty:
+        return rng.uniform(329, 706, size=5000)
+
+    normalized = {str(c).lower().strip(): c for c in df.columns}
+    candidates = [
+        "carbon intensity gco₂eq/kwh (direct)",
+        "carbon intensity gco2eq/kwh (direct)",
+        "carbon intensity",
+        "carbon_intensity",
+        "carbon intensity gco2eq/kwh",
+        "carbon intensity gco₂eq/kwh",
+    ]
+    col = next((normalized[c] for c in candidates if c in normalized), None)
+    if col is None:
+        for c in df.columns:
+            label = str(c).lower()
+            if "carbon" in label and "intensity" in label:
+                col = c
+                break
+    if col is None:
+        return rng.uniform(329, 706, size=5000)
+
+    try:
+        series = df[col].astype(float).dropna().to_numpy()
+    except Exception:
+        return rng.uniform(329, 706, size=5000)
+
+    if len(series) == 0:
+        return rng.uniform(329, 706, size=5000)
     if validation_only:
         split = int(len(series) * 10 / 12)
         series = series[split:]
-    return series
+    return series.astype(float)
 
 
 def run_benchmark(
@@ -211,24 +263,34 @@ def run_benchmark(
     carbon = load_carbon_csv(csv_path)
     results = {}
     for name in policies:
-        if name == "greedy":
+        key = (name or "").strip().lower().replace("-", "_").replace(" ", "_")
+        if key in {"greedy"}:
             policy = GreedyPolicy(
+                run_threshold=GREEDY_RUN_THRESHOLD,
+                pause_threshold=GREEDY_PAUSE_THRESHOLD,
+            )
+        elif key in {"forecast", "forecast_based", "forecast_policy"}:
+            policy = ForecastPolicy(
+                run_threshold=GREEDY_RUN_THRESHOLD,
+                pause_threshold=GREEDY_PAUSE_THRESHOLD,
+            )
+        elif key in {"constraint_lexicographic", "constraintlexicographic", "constraint_lexicographic_policy"}:
+            policy = ConstraintLexicographicPolicy(
                 run_threshold=GREEDY_RUN_THRESHOLD,
                 pause_threshold=GREEDY_PAUSE_THRESHOLD,
             )
         else:
             from app.intelligence.policies.ppo_policy import PPOPolicy
             from stable_baselines3 import PPO
-            from simulator.train_ppo import OBS_SIZE, make_env
 
             model_path = Path(__file__).parent / "models" / "ppo_scheduler.zip"
             if model_path.exists():
                 policy = PPOPolicy(model=PPO.load(str(model_path)))
             else:
                 policy = GreedyPolicy(
-                run_threshold=GREEDY_RUN_THRESHOLD,
-                pause_threshold=GREEDY_PAUSE_THRESHOLD,
-            )
+                    run_threshold=GREEDY_RUN_THRESHOLD,
+                    pause_threshold=GREEDY_PAUSE_THRESHOLD,
+                )
 
         sim = SchedulingSimulator(carbon_series=carbon, policy=policy)
         sim.add_poisson_arrivals(rate=0.02, horizon=horizon)
@@ -254,7 +316,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--csv", default=str(Path(__file__).parent / "data" / "snapshots_2026-02-10_IN-2025-5_minute.csv"))
-    parser.add_argument("--policies", default="greedy,ppo")
+    parser.add_argument("--policies", default="greedy,forecast,constraint_lexicographic,ppo")
     parser.add_argument("--horizon", type=int, default=2000)
     parser.add_argument("--output", default=str(Path(__file__).parent / "logs" / "benchmark_results.json"))
     args = parser.parse_args()
