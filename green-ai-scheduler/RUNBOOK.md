@@ -87,12 +87,13 @@ Open: **http://localhost:5173**
 
 ### 3.1 Choose policy first
 
-**Dashboard:** Click **Greedy** or **PPO** tab (top right).
+**Dashboard:** Click the policy tab on the top right. Supported policies are **Greedy**, **Forecast**, **Constraint-Lexicographic**, and **PPO**.
 
 **Or API:**
 ```bash
 curl "http://localhost:8000/stats?policy=greedy"
-# or
+curl "http://localhost:8000/stats?policy=forecast"
+curl "http://localhost:8000/stats?policy=constraint_lexicographic"
 curl "http://localhost:8000/stats?policy=ppo"
 ```
 
@@ -207,9 +208,9 @@ Important fields on completed jobs:
 
 ---
 
-## Phase 4 — Greedy vs PPO (live comparison)
+## Phase 4 — Live policy comparison
 
-### 4.1 Run A — Greedy
+### 4.1 Greedy
 
 ```bash
 curl "http://localhost:8000/stats?policy=greedy"
@@ -218,9 +219,27 @@ curl -X POST http://localhost:8000/jobs/bulk \
   -d '{"count":5,"name_prefix":"greedy-run","job_type":"simulated","total_epochs":2,"performance_target":1}'
 ```
 
-Wait until all jobs show **COMPLETED** on dashboard. Record **Carbon Saved**.
+Wait until all jobs show **COMPLETED** on the dashboard. Record **Carbon Saved**.
 
-### 4.2 Run B — PPO
+### 4.2 Forecast
+
+```bash
+curl "http://localhost:8000/stats?policy=forecast"
+curl -X POST http://localhost:8000/jobs/bulk \
+  -H "Content-Type: application/json" \
+  -d '{"count":5,"name_prefix":"forecast-run","job_type":"simulated","total_epochs":2,"performance_target":1}'
+```
+
+### 4.3 Constraint-Lexicographic
+
+```bash
+curl "http://localhost:8000/stats?policy=constraint_lexicographic"
+curl -X POST http://localhost:8000/jobs/bulk \
+  -H "Content-Type: application/json" \
+  -d '{"count":5,"name_prefix":"constraint-run","job_type":"simulated","total_epochs":2,"performance_target":1}'
+```
+
+### 4.4 PPO
 
 ```bash
 curl "http://localhost:8000/stats?policy=ppo"
@@ -229,9 +248,9 @@ curl -X POST http://localhost:8000/jobs/bulk \
   -d '{"count":5,"name_prefix":"ppo-run","job_type":"simulated","total_epochs":2,"performance_target":1}'
 ```
 
-Wait for completion. Compare **Carbon Saved**, pause behavior, and per-job `pause_count`.
+Wait for completion. Compare **Carbon Saved**, pause behavior, and per-job `pause_count` across the four policies.
 
-### 4.3 Optional — real model under each policy
+### 4.5 Optional — real model under each policy
 
 Repeat Phase 4 with `"job_type": "resnet50_cifar"` and `total_epochs: 1` (much slower).
 
