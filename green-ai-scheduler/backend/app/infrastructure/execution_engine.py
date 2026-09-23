@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -7,6 +8,8 @@ from typing import Awaitable, Callable, Optional
 
 from app.domain.enums import JobType
 from app.domain.models import SessionReport
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -78,6 +81,7 @@ class ExecutionEngine:
             )
             await on_complete(report)
         except Exception as exc:
+            logger.exception("Training job %s failed", job_id)
             report = SessionReport(
                 job_id=job_id,
                 session_carbon_g=0.0,

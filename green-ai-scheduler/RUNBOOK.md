@@ -64,7 +64,7 @@ cd green-ai-scheduler/backend
 # Faster scheduling for demos (optional; default is 60s)
 export TICK_INTERVAL_SECONDS=5
 
-PYTHONPATH=. uvicorn app.api.main:app --reload --port 8000
+PYTHONPATH=.:.. uvicorn app.api.main:app --reload --port 8000
 ```
 
 Check:
@@ -311,6 +311,30 @@ PYTHONPATH=.:.. python -m simulator.benchmark --policies greedy,ppo --horizon 20
 - Use for **relative** Greedy vs PPO comparison
 - `carbon_saved_g` in benchmark is **not** real kg CO₂ — simplified simulator math
 - Live dashboard `carbon_saved_g` uses real job telemetry (still small scale for simulated jobs)
+
+### 6.1 Four-policy research comparison
+
+The research comparison is isolated from the live scheduler and evaluates all four policies
+against one generated workload, one carbon trace, and one seed. It does not use or reset the
+live SQLite database.
+
+```bash
+curl -X POST http://localhost:8000/comparison/run \
+  -H "Content-Type: application/json" \
+  -d '{"policies":["greedy","forecast","constraint_lexicographic","ppo"],"horizon":2000,"seed":42}'
+```
+
+The response contains a `run_id`. Inspect it with:
+
+```bash
+curl http://localhost:8000/comparison/<run_id>
+curl http://localhost:8000/comparison/results
+```
+
+The comparison stores raw emissions, carbon reduction, throughput, deadline satisfaction,
+waiting time, pauses, performance violations, and clean-window completion for every policy.
+An overall score is `null` unless explicit weights are supplied; normalization is performed
+within that comparison set. The frontend comparison view is available from **Compare**.
 
 ---
 

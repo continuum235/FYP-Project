@@ -32,6 +32,7 @@ class JobRead(BaseModel):
     performance_target: Optional[int]
     total_epochs: int
     total_duration_hours: float
+    error: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
@@ -103,3 +104,25 @@ class BulkJobCreate(BaseModel):
     total_epochs: int = 2
     performance_target: Optional[int] = None
     priority: int = 0
+
+
+class ComparisonRunRequest(BaseModel):
+    policies: list[str] = Field(
+        default=["greedy", "forecast", "constraint_lexicographic", "ppo"],
+        min_length=1,
+    )
+    horizon: int = Field(default=2000, ge=1, le=100000)
+    seed: int = Field(default=42, ge=0)
+    scoring: Optional[dict[str, float]] = None
+
+
+class ComparisonRunResponse(BaseModel):
+    run_id: str
+    status: str
+
+
+class ComparisonResultsResponse(BaseModel):
+    run_id: str
+    status: str
+    created_at: datetime
+    result: dict

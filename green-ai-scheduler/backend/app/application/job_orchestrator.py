@@ -301,6 +301,7 @@ class JobOrchestrator:
 
         if report.error:
             updates["status"] = JobStatus.FAILED
+            updates["error"] = report.error
         elif report.completed:
             updates["status"] = JobStatus.COMPLETED
             await self._refine_profile(job.id)

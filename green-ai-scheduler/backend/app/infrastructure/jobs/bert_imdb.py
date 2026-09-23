@@ -55,9 +55,10 @@ def run_bert_imdb_job(
 
     if os.path.exists(checkpoint_path):
         ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
-        model.load_state_dict(ckpt["model"])
-        optimizer.load_state_dict(ckpt["optimizer"])
-        current_epoch = int(ckpt.get("epoch", start_epoch))
+        if isinstance(ckpt, dict) and {"model", "optimizer"}.issubset(ckpt):
+            model.load_state_dict(ckpt["model"])
+            optimizer.load_state_dict(ckpt["optimizer"])
+            current_epoch = int(ckpt.get("epoch", start_epoch))
 
     paused = False
     completed = False

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import DateTime, Enum, Float, Integer, String, event
+from sqlalchemy import DateTime, Enum, Float, Integer, String, event, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -31,6 +31,7 @@ class JobRow(Base):
     performance_target: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     total_epochs: Mapped[int] = mapped_column(Integer, default=2)
     total_duration_hours: Mapped[float] = mapped_column(Float, default=0.0)
+    error: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
 
 
 class JobTypeProfileRow(Base):
@@ -68,6 +69,11 @@ class PersistentJobStore:
     async def init_db(self) -> None:
         async with self._engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+            if self._engine.url.get_backend_name() == "sqlite":
+                columns = await conn.execute(text("PRAGMA table_info(jobs)"))
+                names = {row[1] for row in columns}
+                if "error" not in names:
+                    await conn.execute(text("ALTER TABLE jobs ADD COLUMN error VARCHAR(2048)"))
         await self._seed_profiles()
 
     async def _seed_profiles(self) -> None:
