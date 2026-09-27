@@ -10816,5 +10816,941 @@
         "ppo": null
       }
     }
+  },
+  {
+    "run_id": "benchmark_0f32f6e81532",
+    "status": "completed",
+    "created_at": "2026-09-27 07:29:53.418126+00:00",
+    "result": {
+      "config": {
+        "seed": 42,
+        "horizon": 2000,
+        "dataset": "/home/continuum/FYP-Project/green-ai-scheduler/backend/simulator/data/snapshots_2026-02-10_IN-2025-5_minute.csv",
+        "policies": [
+          "greedy",
+          "forecast",
+          "constraint_lexicographic",
+          "ppo"
+        ],
+        "workload": [
+          {
+            "job_id": 0,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 235,
+            "arrival_tick": 121,
+            "baseline_carbon_g": 53.947360581187276
+          },
+          {
+            "job_id": 1,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 322,
+            "arrival_tick": 126,
+            "baseline_carbon_g": 55.222794039807056
+          },
+          {
+            "job_id": 2,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 458,
+            "arrival_tick": 283,
+            "baseline_carbon_g": 47.41596048465163
+          },
+          {
+            "job_id": 3,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 484,
+            "arrival_tick": 338,
+            "baseline_carbon_g": 56.4552322654166
+          },
+          {
+            "job_id": 4,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 463,
+            "arrival_tick": 400,
+            "baseline_carbon_g": 41.276345122083505
+          },
+          {
+            "job_id": 5,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 590,
+            "arrival_tick": 446,
+            "baseline_carbon_g": 55.161754801707474
+          },
+          {
+            "job_id": 6,
+            "priority": 0,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 574,
+            "arrival_tick": 458,
+            "baseline_carbon_g": 55.56766994147524
+          },
+          {
+            "job_id": 7,
+            "priority": 2,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 599,
+            "arrival_tick": 479,
+            "baseline_carbon_g": 40.87607531574457
+          },
+          {
+            "job_id": 8,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 676,
+            "arrival_tick": 488,
+            "baseline_carbon_g": 59.3501946486842
+          },
+          {
+            "job_id": 9,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 629,
+            "arrival_tick": 524,
+            "baseline_carbon_g": 49.39111622551616
+          },
+          {
+            "job_id": 10,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 709,
+            "arrival_tick": 557,
+            "baseline_carbon_g": 44.53818698101768
+          },
+          {
+            "job_id": 11,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 687,
+            "arrival_tick": 572,
+            "baseline_carbon_g": 56.653563921156746
+          },
+          {
+            "job_id": 12,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 792,
+            "arrival_tick": 627,
+            "baseline_carbon_g": 56.09528714993604
+          },
+          {
+            "job_id": 13,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 777,
+            "arrival_tick": 684,
+            "baseline_carbon_g": 53.649910079499506
+          },
+          {
+            "job_id": 14,
+            "priority": 2,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 863,
+            "arrival_tick": 693,
+            "baseline_carbon_g": 55.73848755004277
+          },
+          {
+            "job_id": 15,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 914,
+            "arrival_tick": 759,
+            "baseline_carbon_g": 55.614580620439355
+          },
+          {
+            "job_id": 16,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 829,
+            "arrival_tick": 774,
+            "baseline_carbon_g": 42.290601470719466
+          },
+          {
+            "job_id": 17,
+            "priority": 0,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 949,
+            "arrival_tick": 829,
+            "baseline_carbon_g": 51.30472212962378
+          },
+          {
+            "job_id": 18,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1229,
+            "arrival_tick": 1095,
+            "baseline_carbon_g": 51.184143214908275
+          },
+          {
+            "job_id": 19,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1179,
+            "arrival_tick": 1125,
+            "baseline_carbon_g": 48.73434778464725
+          },
+          {
+            "job_id": 20,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1355,
+            "arrival_tick": 1157,
+            "baseline_carbon_g": 44.67878971730681
+          },
+          {
+            "job_id": 21,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1252,
+            "arrival_tick": 1160,
+            "baseline_carbon_g": 45.87187515533367
+          },
+          {
+            "job_id": 22,
+            "priority": 0,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1327,
+            "arrival_tick": 1202,
+            "baseline_carbon_g": 53.28627080654775
+          },
+          {
+            "job_id": 23,
+            "priority": 2,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1389,
+            "arrival_tick": 1217,
+            "baseline_carbon_g": 43.33945839815408
+          },
+          {
+            "job_id": 24,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1388,
+            "arrival_tick": 1223,
+            "baseline_carbon_g": 49.23754460502775
+          },
+          {
+            "job_id": 25,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1368,
+            "arrival_tick": 1243,
+            "baseline_carbon_g": 43.04624205426337
+          },
+          {
+            "job_id": 26,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1413,
+            "arrival_tick": 1339,
+            "baseline_carbon_g": 46.03024178295753
+          },
+          {
+            "job_id": 27,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1470,
+            "arrival_tick": 1366,
+            "baseline_carbon_g": 41.75299838632202
+          },
+          {
+            "job_id": 28,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1496,
+            "arrival_tick": 1392,
+            "baseline_carbon_g": 53.99414267621499
+          },
+          {
+            "job_id": 29,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1690,
+            "arrival_tick": 1495,
+            "baseline_carbon_g": 55.575018079315896
+          },
+          {
+            "job_id": 30,
+            "priority": 2,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1692,
+            "arrival_tick": 1532,
+            "baseline_carbon_g": 41.92781924306998
+          },
+          {
+            "job_id": 31,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1758,
+            "arrival_tick": 1640,
+            "baseline_carbon_g": 44.047267295904604
+          },
+          {
+            "job_id": 32,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1788,
+            "arrival_tick": 1656,
+            "baseline_carbon_g": 57.132285681847506
+          },
+          {
+            "job_id": 33,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1921,
+            "arrival_tick": 1764,
+            "baseline_carbon_g": 48.641860795502076
+          },
+          {
+            "job_id": 34,
+            "priority": 0,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1837,
+            "arrival_tick": 1773,
+            "baseline_carbon_g": 41.68888642279778
+          },
+          {
+            "job_id": 35,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1849,
+            "arrival_tick": 1793,
+            "baseline_carbon_g": 49.879816384890376
+          },
+          {
+            "job_id": 36,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1993,
+            "arrival_tick": 1842,
+            "baseline_carbon_g": 51.75289144355424
+          },
+          {
+            "job_id": 37,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 2071,
+            "arrival_tick": 1883,
+            "baseline_carbon_g": 51.6212227940079
+          },
+          {
+            "job_id": 38,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 2061,
+            "arrival_tick": 1967,
+            "baseline_carbon_g": 59.17118426482891
+          }
+        ],
+        "scoring": null
+      },
+      "policies": {
+        "greedy": {
+          "total_carbon_g": 3.2122575900281953,
+          "baseline_carbon_g": 1953.1441503161118,
+          "carbon_saved_g": 1949.9318927260836,
+          "carbon_reduction_percent": 99.83553402397317,
+          "average_carbon_intensity": 535.3762650046991,
+          "carbon_per_completed_job_g": 0.0823655792314922,
+          "jobs_submitted": 39,
+          "jobs_completed": 39,
+          "jobs_failed": 0,
+          "deadline_misses": 0,
+          "deadline_satisfaction_percent": 100.0,
+          "total_pause_count": 1,
+          "average_pause_count": 0.02564102564102564,
+          "total_waiting_time_hours": 2.083333333333333,
+          "average_waiting_time_hours": 0.05341880341880341,
+          "average_completion_time_hours": 0.18162393162393162,
+          "performance_violations": 0,
+          "jobs_affected_by_performance_constraints": 0,
+          "clean_window_finishes": 14,
+          "clean_window_completion_percent": 35.8974358974359
+        },
+        "forecast": {
+          "total_carbon_g": 3.2164331795662293,
+          "baseline_carbon_g": 1953.1441503161118,
+          "carbon_saved_g": 1949.9277171365457,
+          "carbon_reduction_percent": 99.83532023588502,
+          "average_carbon_intensity": 536.0721965943716,
+          "carbon_per_completed_job_g": 0.08247264562990332,
+          "jobs_submitted": 39,
+          "jobs_completed": 39,
+          "jobs_failed": 0,
+          "deadline_misses": 0,
+          "deadline_satisfaction_percent": 100.0,
+          "total_pause_count": 1,
+          "average_pause_count": 0.02564102564102564,
+          "total_waiting_time_hours": 0.5833333333333333,
+          "average_waiting_time_hours": 0.014957264957264956,
+          "average_completion_time_hours": 0.14316239316239315,
+          "performance_violations": 0,
+          "jobs_affected_by_performance_constraints": 0,
+          "clean_window_finishes": 17,
+          "clean_window_completion_percent": 43.58974358974359
+        },
+        "constraint_lexicographic": {
+          "total_carbon_g": 3.1975581789904317,
+          "baseline_carbon_g": 1953.1441503161118,
+          "carbon_saved_g": 1949.9465921371213,
+          "carbon_reduction_percent": 99.83628662643908,
+          "average_carbon_intensity": 532.926363165072,
+          "carbon_per_completed_job_g": 0.08198867125616492,
+          "jobs_submitted": 39,
+          "jobs_completed": 39,
+          "jobs_failed": 0,
+          "deadline_misses": 0,
+          "deadline_satisfaction_percent": 100.0,
+          "total_pause_count": 0,
+          "average_pause_count": 0.0,
+          "total_waiting_time_hours": 0.0,
+          "average_waiting_time_hours": 0.0,
+          "average_completion_time_hours": 0.1282051282051282,
+          "performance_violations": 0,
+          "jobs_affected_by_performance_constraints": 0,
+          "clean_window_finishes": 18,
+          "clean_window_completion_percent": 46.15384615384615
+        },
+        "ppo": {
+          "total_carbon_g": 2.1336143425493628,
+          "baseline_carbon_g": 1953.1441503161118,
+          "carbon_saved_g": 1951.0105359735624,
+          "carbon_reduction_percent": 99.89076001675534,
+          "average_carbon_intensity": 508.00341489270545,
+          "carbon_per_completed_job_g": 0.07620051223390581,
+          "jobs_submitted": 39,
+          "jobs_completed": 28,
+          "jobs_failed": 10,
+          "deadline_misses": 10,
+          "deadline_satisfaction_percent": 73.68421052631578,
+          "total_pause_count": 21,
+          "average_pause_count": 0.75,
+          "total_waiting_time_hours": 167.25,
+          "average_waiting_time_hours": 5.973214285714286,
+          "average_completion_time_hours": 6.098214285714286,
+          "performance_violations": 21,
+          "jobs_affected_by_performance_constraints": 2,
+          "clean_window_finishes": 14,
+          "clean_window_completion_percent": 50.0
+        }
+      },
+      "score": {
+        "greedy": null,
+        "forecast": null,
+        "constraint_lexicographic": null,
+        "ppo": null
+      }
+    }
+  },
+  {
+    "run_id": "benchmark_bdfcdc413029",
+    "status": "completed",
+    "created_at": "2026-09-27 07:45:35.663147+00:00",
+    "result": {
+      "config": {
+        "seed": 42,
+        "horizon": 2000,
+        "dataset": "/home/continuum/FYP-Project/green-ai-scheduler/simulator/data/snapshots_2026-02-10_IN-2025-5_minute.csv",
+        "policies": [
+          "greedy",
+          "forecast",
+          "constraint_lexicographic",
+          "ppo"
+        ],
+        "workload": [
+          {
+            "job_id": 0,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 235,
+            "arrival_tick": 121,
+            "baseline_carbon_g": 53.947360581187276
+          },
+          {
+            "job_id": 1,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 322,
+            "arrival_tick": 126,
+            "baseline_carbon_g": 55.222794039807056
+          },
+          {
+            "job_id": 2,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 458,
+            "arrival_tick": 283,
+            "baseline_carbon_g": 47.41596048465163
+          },
+          {
+            "job_id": 3,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 484,
+            "arrival_tick": 338,
+            "baseline_carbon_g": 56.4552322654166
+          },
+          {
+            "job_id": 4,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 463,
+            "arrival_tick": 400,
+            "baseline_carbon_g": 41.276345122083505
+          },
+          {
+            "job_id": 5,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 590,
+            "arrival_tick": 446,
+            "baseline_carbon_g": 55.161754801707474
+          },
+          {
+            "job_id": 6,
+            "priority": 0,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 574,
+            "arrival_tick": 458,
+            "baseline_carbon_g": 55.56766994147524
+          },
+          {
+            "job_id": 7,
+            "priority": 2,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 599,
+            "arrival_tick": 479,
+            "baseline_carbon_g": 40.87607531574457
+          },
+          {
+            "job_id": 8,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 676,
+            "arrival_tick": 488,
+            "baseline_carbon_g": 59.3501946486842
+          },
+          {
+            "job_id": 9,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 629,
+            "arrival_tick": 524,
+            "baseline_carbon_g": 49.39111622551616
+          },
+          {
+            "job_id": 10,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 709,
+            "arrival_tick": 557,
+            "baseline_carbon_g": 44.53818698101768
+          },
+          {
+            "job_id": 11,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 687,
+            "arrival_tick": 572,
+            "baseline_carbon_g": 56.653563921156746
+          },
+          {
+            "job_id": 12,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 792,
+            "arrival_tick": 627,
+            "baseline_carbon_g": 56.09528714993604
+          },
+          {
+            "job_id": 13,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 777,
+            "arrival_tick": 684,
+            "baseline_carbon_g": 53.649910079499506
+          },
+          {
+            "job_id": 14,
+            "priority": 2,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 863,
+            "arrival_tick": 693,
+            "baseline_carbon_g": 55.73848755004277
+          },
+          {
+            "job_id": 15,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 914,
+            "arrival_tick": 759,
+            "baseline_carbon_g": 55.614580620439355
+          },
+          {
+            "job_id": 16,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 829,
+            "arrival_tick": 774,
+            "baseline_carbon_g": 42.290601470719466
+          },
+          {
+            "job_id": 17,
+            "priority": 0,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 949,
+            "arrival_tick": 829,
+            "baseline_carbon_g": 51.30472212962378
+          },
+          {
+            "job_id": 18,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1229,
+            "arrival_tick": 1095,
+            "baseline_carbon_g": 51.184143214908275
+          },
+          {
+            "job_id": 19,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1179,
+            "arrival_tick": 1125,
+            "baseline_carbon_g": 48.73434778464725
+          },
+          {
+            "job_id": 20,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1355,
+            "arrival_tick": 1157,
+            "baseline_carbon_g": 44.67878971730681
+          },
+          {
+            "job_id": 21,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1252,
+            "arrival_tick": 1160,
+            "baseline_carbon_g": 45.87187515533367
+          },
+          {
+            "job_id": 22,
+            "priority": 0,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1327,
+            "arrival_tick": 1202,
+            "baseline_carbon_g": 53.28627080654775
+          },
+          {
+            "job_id": 23,
+            "priority": 2,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1389,
+            "arrival_tick": 1217,
+            "baseline_carbon_g": 43.33945839815408
+          },
+          {
+            "job_id": 24,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1388,
+            "arrival_tick": 1223,
+            "baseline_carbon_g": 49.23754460502775
+          },
+          {
+            "job_id": 25,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1368,
+            "arrival_tick": 1243,
+            "baseline_carbon_g": 43.04624205426337
+          },
+          {
+            "job_id": 26,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1413,
+            "arrival_tick": 1339,
+            "baseline_carbon_g": 46.03024178295753
+          },
+          {
+            "job_id": 27,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1470,
+            "arrival_tick": 1366,
+            "baseline_carbon_g": 41.75299838632202
+          },
+          {
+            "job_id": 28,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1496,
+            "arrival_tick": 1392,
+            "baseline_carbon_g": 53.99414267621499
+          },
+          {
+            "job_id": 29,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1690,
+            "arrival_tick": 1495,
+            "baseline_carbon_g": 55.575018079315896
+          },
+          {
+            "job_id": 30,
+            "priority": 2,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1692,
+            "arrival_tick": 1532,
+            "baseline_carbon_g": 41.92781924306998
+          },
+          {
+            "job_id": 31,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1758,
+            "arrival_tick": 1640,
+            "baseline_carbon_g": 44.047267295904604
+          },
+          {
+            "job_id": 32,
+            "priority": 2,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1788,
+            "arrival_tick": 1656,
+            "baseline_carbon_g": 57.132285681847506
+          },
+          {
+            "job_id": 33,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1921,
+            "arrival_tick": 1764,
+            "baseline_carbon_g": 48.641860795502076
+          },
+          {
+            "job_id": 34,
+            "priority": 0,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1837,
+            "arrival_tick": 1773,
+            "baseline_carbon_g": 41.68888642279778
+          },
+          {
+            "job_id": 35,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 1849,
+            "arrival_tick": 1793,
+            "baseline_carbon_g": 49.879816384890376
+          },
+          {
+            "job_id": 36,
+            "priority": 1,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 1993,
+            "arrival_tick": 1842,
+            "baseline_carbon_g": 51.75289144355424
+          },
+          {
+            "job_id": 37,
+            "priority": 0,
+            "total_epochs": 1,
+            "performance_target": 1,
+            "deadline_tick": 2071,
+            "arrival_tick": 1883,
+            "baseline_carbon_g": 51.6212227940079
+          },
+          {
+            "job_id": 38,
+            "priority": 1,
+            "total_epochs": 2,
+            "performance_target": 1,
+            "deadline_tick": 2061,
+            "arrival_tick": 1967,
+            "baseline_carbon_g": 59.17118426482891
+          }
+        ],
+        "scoring": null
+      },
+      "policies": {
+        "greedy": {
+          "total_carbon_g": 2.9592820000000004,
+          "baseline_carbon_g": 1953.1441503161118,
+          "carbon_saved_g": 1950.1848683161118,
+          "carbon_reduction_percent": 99.84848624718656,
+          "average_carbon_intensity": 519.1722807017544,
+          "carbon_per_completed_job_g": 0.07998059459459461,
+          "jobs_submitted": 39,
+          "jobs_completed": 37,
+          "jobs_failed": 0,
+          "deadline_misses": 0,
+          "deadline_satisfaction_percent": 100.0,
+          "total_pause_count": 0,
+          "average_pause_count": 0.0,
+          "total_waiting_time_hours": 114.08333333333333,
+          "average_waiting_time_hours": 3.083333333333333,
+          "average_completion_time_hours": 3.2117117117117115,
+          "performance_violations": 0,
+          "jobs_affected_by_performance_constraints": 0,
+          "clean_window_finishes": 24,
+          "clean_window_completion_percent": 64.86486486486487
+        },
+        "forecast": {
+          "total_carbon_g": 2.866924,
+          "baseline_carbon_g": 1953.1441503161118,
+          "carbon_saved_g": 1950.2772263161119,
+          "carbon_reduction_percent": 99.85321493042201,
+          "average_carbon_intensity": 511.9507142857143,
+          "carbon_per_completed_job_g": 0.07963677777777778,
+          "jobs_submitted": 39,
+          "jobs_completed": 36,
+          "jobs_failed": 2,
+          "deadline_misses": 2,
+          "deadline_satisfaction_percent": 94.73684210526315,
+          "total_pause_count": 0,
+          "average_pause_count": 0.0,
+          "total_waiting_time_hours": 140.0,
+          "average_waiting_time_hours": 3.888888888888889,
+          "average_completion_time_hours": 4.018518518518518,
+          "performance_violations": 0,
+          "jobs_affected_by_performance_constraints": 0,
+          "clean_window_finishes": 27,
+          "clean_window_completion_percent": 75.0
+        },
+        "constraint_lexicographic": {
+          "total_carbon_g": 3.2762860000000003,
+          "baseline_carbon_g": 1953.1441503161118,
+          "carbon_saved_g": 1949.8678643161118,
+          "carbon_reduction_percent": 99.83225580152546,
+          "average_carbon_intensity": 546.0476666666667,
+          "carbon_per_completed_job_g": 0.08400733333333334,
+          "jobs_submitted": 39,
+          "jobs_completed": 39,
+          "jobs_failed": 0,
+          "deadline_misses": 0,
+          "deadline_satisfaction_percent": 100.0,
+          "total_pause_count": 0,
+          "average_pause_count": 0.0,
+          "total_waiting_time_hours": 0.0,
+          "average_waiting_time_hours": 0.0,
+          "average_completion_time_hours": 0.1282051282051282,
+          "performance_violations": 0,
+          "jobs_affected_by_performance_constraints": 0,
+          "clean_window_finishes": 14,
+          "clean_window_completion_percent": 35.8974358974359
+        },
+        "ppo": {
+          "total_carbon_g": 3.39839,
+          "baseline_carbon_g": 1953.1441503161118,
+          "carbon_saved_g": 1949.7457603161117,
+          "carbon_reduction_percent": 99.82600413802278,
+          "average_carbon_intensity": 566.3983333333333,
+          "carbon_per_completed_job_g": 0.08713820512820512,
+          "jobs_submitted": 39,
+          "jobs_completed": 39,
+          "jobs_failed": 0,
+          "deadline_misses": 0,
+          "deadline_satisfaction_percent": 100.0,
+          "total_pause_count": 0,
+          "average_pause_count": 0.0,
+          "total_waiting_time_hours": 42.33333333333333,
+          "average_waiting_time_hours": 1.0854700854700854,
+          "average_completion_time_hours": 1.2136752136752136,
+          "performance_violations": 0,
+          "jobs_affected_by_performance_constraints": 0,
+          "clean_window_finishes": 6,
+          "clean_window_completion_percent": 15.384615384615385
+        }
+      },
+      "score": {
+        "greedy": null,
+        "forecast": null,
+        "constraint_lexicographic": null,
+        "ppo": null
+      }
+    }
   }
 ]

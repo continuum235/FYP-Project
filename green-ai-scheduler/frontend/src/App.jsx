@@ -315,7 +315,7 @@ export default function App() {
             </div>
             <div className="comparison-table-wrap">
               <table className="comparison-table">
-                <thead><tr><th>Policy</th><th>Carbon</th><th>Saved</th><th>Completed</th><th>Deadline misses</th><th>Avg pauses</th><th>Score</th></tr></thead>
+                <thead><tr><th>Policy</th><th>Carbon emitted</th><th>Total Carbon Saved</th><th>Jobs Completed</th><th>Deadline misses</th><th>Avg pauses</th><th>Score</th></tr></thead>
                 <tbody>{Object.entries(rows).map(([name, row]) => (
                   <tr key={name}>
                     <td><strong>{formatPolicy(name)}</strong></td>

@@ -154,7 +154,7 @@ See also [backend/docs/status_machine.md](backend/docs/status_machine.md).
 | PPO model file **missing** | `PPOPolicy` delegates to **GreedyPolicy** |
 | PPO model **loaded** but hard constraints violated | **Force RUN** for critical deadline or max pauses only |
 | No API key in `.env` | `CarbonEstimator` uses **mock** 500 gCO₂/kWh |
-| CSV missing for simulator | **Synthetic** random carbon series (329–706 range) |
+| CSV missing for simulator | **Error** — `FileNotFoundError` (no random fallback); `/comparison/run` returns HTTP 503 |
 
 **Recommendation:** Use **Greedy** for the live demo and report it as the primary deliverable. Use **PPO** as a secondary comparison after running `train_ppo` + `benchmark`.
 

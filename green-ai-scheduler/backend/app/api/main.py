@@ -46,6 +46,8 @@ def create_app() -> FastAPI:
             run_id = app.state.comparison_service.run(
                 payload.policies, payload.horizon, payload.seed, payload.scoring
             )
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
         except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         return ComparisonRunResponse(run_id=run_id, status="completed")

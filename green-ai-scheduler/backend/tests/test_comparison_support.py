@@ -1,3 +1,15 @@
+from pathlib import Path
+
+import pytest
+
+from app.application.comparison_service import (
+    BACKEND_ROOT,
+    CARBON_DATASET_NAME,
+    DEFAULT_CARBON_DATASET_PATH,
+    PROJECT_ROOT,
+    ComparisonService,
+)
+from simulator.benchmark import load_carbon_csv
 from simulator.scoring import ScoreConfig, score_results
 from simulator.workload_generator import generate_workload
 
@@ -38,3 +50,49 @@ def test_scoring_normalizes_each_comparison_set():
 
 def test_scoring_is_disabled_without_explicit_configuration():
     assert score_results({"greedy": {}}, None) == {"greedy": None}
+
+
+def test_comparison_service_uses_top_level_simulator_dataset():
+    assert PROJECT_ROOT == BACKEND_ROOT.parent
+    assert DEFAULT_CARBON_DATASET_PATH == PROJECT_ROOT / "simulator" / "data" / CARBON_DATASET_NAME
+    assert DEFAULT_CARBON_DATASET_PATH.is_file()
+
+
+def test_comparison_service_does_not_look_for_dataset_under_backend():
+    assert not (BACKEND_ROOT / "simulator" / "data" / CARBON_DATASET_NAME).exists()
+
+
+def test_carbon_loader_reads_real_dataset_instead_of_random_fallback():
+    series = load_carbon_csv(DEFAULT_CARBON_DATASET_PATH)
+    assert series.size > 5000
+    assert 100.0 < series.min() and series.max() < 1200.0
+
+
+def test_carbon_loader_raises_instead_of_returning_random_data(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        load_carbon_csv(tmp_path / "snapshots_missing.csv")
+
+
+def test_carbon_loader_raises_on_dataset_without_carbon_column(tmp_path):
+    unusable = tmp_path / "unusable.csv"
+    unusable.write_text("a,b\n1,2\n")
+    with pytest.raises(ValueError):
+        load_carbon_csv(unusable)
+
+
+def test_comparison_service_run_reports_missing_dataset(tmp_path):
+    service = ComparisonService(
+        results_path=tmp_path / "comparison_results.json",
+        carbon_dataset_path=tmp_path / "missing.csv",
+    )
+    with pytest.raises(FileNotFoundError):
+        service.run(["greedy"], horizon=50, seed=1, scoring=None)
+
+
+def test_comparison_service_run_records_real_dataset_path(tmp_path):
+    service = ComparisonService(results_path=tmp_path / "comparison_results.json")
+    run_id = service.run(["greedy"], horizon=50, seed=1, scoring=None)
+    stored = service.get(run_id)
+    assert stored is not None
+    assert Path(stored["result"]["config"]["dataset"]) == DEFAULT_CARBON_DATASET_PATH
+    assert stored["result"]["policies"]["greedy"]["average_carbon_intensity"] > 0.0

@@ -94,7 +94,7 @@ Policy-parametric tests run against both Greedy and PPO fixtures automatically.
 
 ## PPO training & four-policy benchmark
 
-Place `snapshots_2026-02-10_IN-2025-5_minute.csv` inside `simulator/data/` for real Indian grid carbon data (synthetic fallback is used if the file is missing).
+Place `snapshots_2026-02-10_IN-2025-5_minute.csv` inside `simulator/data/` for real Indian grid carbon data. The simulator and the comparison API both read that path, and both raise an error when the file is missing instead of benchmarking on random carbon values.
 
 ```bash
 cd green-ai-scheduler/backend

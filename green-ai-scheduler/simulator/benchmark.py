@@ -233,17 +233,22 @@ class SchedulingSimulator:
 
 
 def load_carbon_csv(path: Path, validation_only: bool = True) -> np.ndarray:
-    rng = np.random.default_rng(0)
-    if not path.exists():
-        return rng.uniform(329, 706, size=5000)
+    """Load the carbon intensity series from a snapshots CSV.
+
+    Never falls back to synthetic values: a missing or unusable dataset is an
+    error, otherwise benchmark numbers silently describe random carbon data.
+    """
+    path = Path(path)
+    if not path.is_file():
+        raise FileNotFoundError(f"carbon dataset not found: {path}")
 
     try:
         df = pd.read_csv(path)
-    except Exception:
-        return rng.uniform(329, 706, size=5000)
+    except Exception as exc:
+        raise ValueError(f"carbon dataset could not be parsed: {path} ({exc})") from exc
 
     if df.empty:
-        return rng.uniform(329, 706, size=5000)
+        raise ValueError(f"carbon dataset is empty: {path}")
 
     normalized = {str(c).lower().strip(): c for c in df.columns}
     candidates = [
@@ -262,15 +267,15 @@ def load_carbon_csv(path: Path, validation_only: bool = True) -> np.ndarray:
                 col = c
                 break
     if col is None:
-        return rng.uniform(329, 706, size=5000)
+        raise ValueError(f"carbon dataset has no carbon intensity column: {path}")
 
     try:
         series = df[col].astype(float).dropna().to_numpy()
-    except Exception:
-        return rng.uniform(329, 706, size=5000)
+    except Exception as exc:
+        raise ValueError(f"carbon intensity column is not numeric in {path} ({exc})") from exc
 
     if len(series) == 0:
-        return rng.uniform(329, 706, size=5000)
+        raise ValueError(f"carbon dataset has no numeric carbon intensity values: {path}")
     if validation_only:
         split = int(len(series) * 10 / 12)
         series = series[split:]
